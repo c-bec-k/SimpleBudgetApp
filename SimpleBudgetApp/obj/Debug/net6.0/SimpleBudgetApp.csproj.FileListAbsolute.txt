@@ -1,0 +1,6 @@
+/Users/beck/Projects/SimpleBudgetApp/SimpleBudgetApp/obj/Debug/net6.0/SimpleBudgetApp.csproj.AssemblyReference.cache
+/Users/beck/Projects/SimpleBudgetApp/SimpleBudgetApp/obj/Debug/net6.0/SimpleBudgetApp.GeneratedMSBuildEditorConfig.editorconfig
+/Users/beck/Projects/SimpleBudgetApp/SimpleBudgetApp/obj/Debug/net6.0/SimpleBudgetApp.AssemblyInfoInputs.cache
+/Users/beck/Projects/SimpleBudgetApp/SimpleBudgetApp/obj/Debug/net6.0/SimpleBudgetApp.AssemblyInfo.cs
+/Users/beck/Projects/SimpleBudgetApp/SimpleBudgetApp/obj/Debug/net6.0/SimpleBudgetApp.csproj.CoreCompileInputs.cache
+/Users/beck/Projects/SimpleBudgetApp/SimpleBudgetApp/obj/Debug/net6.0/SimpleBudgetApp.MvcApplicationPartsAssemblyInfo.cache
