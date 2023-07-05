@@ -13,12 +13,12 @@ public class UserCache
   public UserCache()
   {
     _cache = new();
-    _timer = new(CleanCache, null, TimeSpan.FromSeconds(0), TimeSpan.FromDays(7));
+    _timer = new(CleanCache, null, TimeSpan.FromSeconds(0), TimeSpan.FromDays(1));
   }
 
     public void Add(string hashVal, User user)
   {
-    DateTimeOffset exp = new DateTimeOffset(new DateTime()).AddDays(7);
+    DateTimeOffset exp = DateTimeOffset.Now.AddDays(7);
     _cache.TryAdd(hashVal, (user, exp));
   }
 
@@ -32,7 +32,7 @@ public class UserCache
   {
     foreach (var item in _cache)
     {
-      if (item.Value.expiry < new DateTimeOffset(new DateTime())) _cache.TryRemove(item);
+      if (item.Value.expiry < DateTimeOffset.Now) _cache.TryRemove(item);
     }
   }
   // public Entries(fn function)
