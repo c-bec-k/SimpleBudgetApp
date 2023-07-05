@@ -4,13 +4,38 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleBudgetApp;
 
-public record Transaction(
-  [property: DatabaseGenerated(DatabaseGeneratedOption.Identity), Key]
-  int Id,
-  int AmountInCents,
-  int Category,
-  int User,
-  int DateInUnix,
-  string Vendor,
-  string Note
-);
+[Table(name: "transactions")]
+public class Transaction
+{
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(name: "id")]
+    public int Id { get; set; }
+
+    [Column(name: "amount_in_centes")]
+    public int AmountInCents { get; set; }
+
+    [Column(name: "category_id")]
+    public int CategoryId { get; set; }
+
+    [Column(name: "user_id")]
+    public int UserId { get; set; }
+
+    [Column(name: "date_in_unix")]
+    public int DateInUnix { get; set; }
+
+    [Column(name: "vendor")]
+    public string Vendor { get; set; }
+
+    [Column(name: "notes")]
+    public string Note { get; set; }
+}
+
+//public record Transaction(
+//  [property: DatabaseGenerated(DatabaseGeneratedOption.Identity), Key]
+//int Id,
+//  int AmountInCents,
+//  int Category,
+//  int User,
+//  int DateInUnix,
+//  string Vendor,
+//  string Note
+//);
