@@ -10,7 +10,7 @@ public class Transaction
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(name: "id")]
     public int Id { get; set; }
 
-    [Column(name: "amount_in_centes")]
+    [Column(name: "amount_in_cents")]
     public int AmountInCents { get; set; }
 
     [Column(name: "category_id")]
