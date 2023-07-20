@@ -18,8 +18,8 @@ public class Category
     [Column(name: "amount_in_cents")]
     public int AmountInCents { get; set; }
 
-    [Column(name: "effective_date_in_unix")]
-    public int EffectiveDateInUnix { get; set; }
+    [Column(name: "effective_date_unix_time_seconds")]
+    public long EffectiveDateUnixTimeSeconds { get; set; }
 
     [Column(name: "user_id")]
     public int UserId { get; set; }
