@@ -24,7 +24,8 @@ public class UserCache
 
   public int GetUser(string hashVal)
   {
-    _cache.TryGetValue(hashVal, out (int userId, DateTimeOffset exp) val);
+    bool isFound = _cache.TryGetValue(hashVal, out (int userId, DateTimeOffset exp) val);
+    if (!isFound) return 0;
     return val.userId;
   }
 
