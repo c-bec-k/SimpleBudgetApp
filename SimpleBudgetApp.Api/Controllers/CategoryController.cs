@@ -11,7 +11,7 @@ public static class CategoryController
     app.MapPost("/category", async (HttpContext ctx, SimpleBudgetDbContext Db, UserCache cache) =>
     {
       int userId = Helpers.GetUserFromCache(ctx, cache);
-      if (userId == -1) return Results.();
+      if (userId == -1) return Results.Unauthorized();
       if (userId == 0)
       {
         ctx.Response.Cookies.Delete("Auth");
