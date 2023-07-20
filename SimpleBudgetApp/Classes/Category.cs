@@ -30,5 +30,6 @@ public class Category
 
 public record CategoryDisplayViewModel(
 string Name,
-long AmountInCents
+long AmountInCents,
+int Id
 );

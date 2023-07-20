@@ -11,12 +11,8 @@ public static class CategoryController
     app.MapPost("/category", async (HttpContext ctx, SimpleBudgetDbContext Db, UserCache cache) =>
     {
       int userId = Helpers.GetUserFromCache(ctx, cache);
-      if (userId == -1) return Results.Unauthorized();
-      if (userId == 0)
-      {
-        ctx.Response.Cookies.Delete("Auth");
-        return Results.Unauthorized();
-      }
+      if (userId == 0) ctx.Response.Cookies.Delete("Auth");
+      if (userId < 1) return Results.Unauthorized();
 
       using JsonDocument data = await JsonDocument.ParseAsync(ctx.Request.Body);
       JsonElement payload = data.RootElement;
@@ -50,23 +46,42 @@ public static class CategoryController
       var SavedCategory = await Db.Categories.AddAsync(catToSave);
       Db.SaveChanges();
 
-      return Results.Ok(SavedCategory.Entity);
+      return Results.Ok(new { name = SavedCategory.Entity.Name, amountInCents = SavedCategory.Entity.AmountInCents, id = SavedCategory.Entity.Id } );
     });
 
 
     app.MapGet("/category", (HttpContext ctx, UserCache cache, SimpleBudgetDbContext Db) =>
     {
       int userId = Helpers.GetUserFromCache(ctx, cache);
-      if (userId == -1) return Results.Unauthorized();
-      if (userId == 0)
+      if (userId == 0) ctx.Response.Cookies.Delete("Auth");
+      if (userId < 1) return Results.Unauthorized();
+
+      List<Category> categories = Db.Categories.Where(x => x.UserId == userId && x.IsCurrent).ToList();
+      List<CategoryDisplayViewModel> catsToSend = new();
+
+      foreach (var cat in categories)
       {
-        ctx.Response.Cookies.Delete("Auth");
-        return Results.Unauthorized();
+        catsToSend.Add(new CategoryDisplayViewModel(Id: cat.Id, Name: cat.Name, AmountInCents: cat.AmountInCents));
       }
 
-      List<Category> catsToSend = Db.Categories.Where(x => x.UserId == userId && x.IsCurrent).ToList();
-      
       return Results.Ok(catsToSend);
     });
+
+
+    app.MapDelete("/category/{id:int}", async (int id, HttpContext ctx, UserCache cache, SimpleBudgetDbContext Db) =>
+    {
+      int userId = Helpers.GetUserFromCache(ctx, cache);
+      if (userId == 0) ctx.Response.Cookies.Delete("Auth");
+      if (userId < 1) return Results.Unauthorized();
+
+      Category toDelete = await Db.Categories.FindAsync(id);
+      if (toDelete == null) return Results.BadRequest();
+      if (toDelete.UserId != userId) return Results.Forbid();
+
+      Db.Categories.Remove(toDelete);
+      Db.SaveChanges();
+      return Results.Ok();
+    });
   }
+
 }
