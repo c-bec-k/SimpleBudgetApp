@@ -10,7 +10,7 @@ public static class Helpers
 	{
 		string userHash = ctx.Request.Cookies["Auth"];
 		if (String.IsNullOrEmpty(userHash)) return -1;
-		int userId = cache.GetUserId(userHash);
+		int userId = cache.GetUser(userHash);
 		return userId;
 	}
 }
