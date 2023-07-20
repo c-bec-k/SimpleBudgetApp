@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
 using SimpleBudgetApp.SqlDbServices;
 
 namespace SimpleBudgetApp.Api;
@@ -11,19 +10,17 @@ public static class CategoryController
   {
     app.MapPost("/category", async (HttpContext ctx, SimpleBudgetDbContext Db, UserCache cache) =>
     {
-      string userHash = ctx.Request.Cookies["Auth"];
-      using JsonDocument data = await JsonDocument.ParseAsync(ctx.Request.Body);
-      JsonElement payload = data.RootElement;
-
-      if (String.IsNullOrEmpty(userHash)) return Results.Unauthorized();
-
-      int userId = cache.GetUser(userHash);
-
-      if (userId < 1)
+      int userId = Helpers.GetUserFromCache(ctx, cache);
+      if (userId == -1) return Results.();
+      if (userId == 0)
       {
         ctx.Response.Cookies.Delete("Auth");
         return Results.Unauthorized();
       }
+
+      using JsonDocument data = await JsonDocument.ParseAsync(ctx.Request.Body);
+      JsonElement payload = data.RootElement;
+
 
       DateTime rightNow = new(DateTime.Now.Year, DateTime.Now.Month, 1);
       long offsetNow = new DateTimeOffset(rightNow).ToUnixTimeSeconds();
@@ -52,30 +49,24 @@ public static class CategoryController
 
       var SavedCategory = await Db.Categories.AddAsync(catToSave);
       Db.SaveChanges();
-      
+
       return Results.Ok(SavedCategory.Entity);
     });
 
 
-    app.MapGet("/category/{id}", async (HttpContext ctx, int catId, UserCache cache, SimpleBudgetDbContext db) =>
+    app.MapGet("/category", (HttpContext ctx, UserCache cache, SimpleBudgetDbContext Db) =>
     {
-
-      string userHash = ctx.Request.Cookies["Auth"];
-      if (String.IsNullOrEmpty(userHash)) return HttpStatusCode.Unauthorized;
-
-      int userId = cache.GetUser(userHash);
+      (bool verified, int userId) = Helpers.ValidateUser(ctx.Request.Cookies["Auth"], cache);
+      if (!verified) return Results.Unauthorized();
       if (userId < 1)
       {
         ctx.Response.Cookies.Delete("Auth");
-        return HttpStatusCode.Unauthorized;
+        return Results.Unauthorized();
       }
 
-      Category cat = await db.Categories.FindAsync(catId);
-      if (cat == null) return HttpStatusCode.NotFound;
-
-      CategoryDisplayViewModel catToSend = new(cat.Name, cat.AmountInCents);
-      await ctx.Response.WriteAsJsonAsync(catToSend);
-      return HttpStatusCode.OK;
+      List<Category> catsToSend = Db.Categories.Where(x => x.UserId == userId && x.IsCurrent).ToList();
+      
+      return Results.Ok(catsToSend);
     });
   }
 }
