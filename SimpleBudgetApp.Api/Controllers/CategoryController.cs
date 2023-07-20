@@ -56,9 +56,9 @@ public static class CategoryController
 
     app.MapGet("/category", (HttpContext ctx, UserCache cache, SimpleBudgetDbContext Db) =>
     {
-      (bool verified, int userId) = Helpers.ValidateUser(ctx.Request.Cookies["Auth"], cache);
-      if (!verified) return Results.Unauthorized();
-      if (userId < 1)
+      int userId = Helpers.GetUserFromCache(ctx, cache);
+      if (userId == -1) return Results.Unauthorized();
+      if (userId == 0)
       {
         ctx.Response.Cookies.Delete("Auth");
         return Results.Unauthorized();
