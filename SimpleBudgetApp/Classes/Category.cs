@@ -16,7 +16,7 @@ public class Category
     public string Name { get; set; }
 
     [Column(name: "amount_in_cents")]
-    public int AmountInCents { get; set; }
+    public long AmountInCents { get; set; }
 
     [Column(name: "effective_date_unix_time_seconds")]
     public long EffectiveDateUnixTimeSeconds { get; set; }
@@ -27,3 +27,8 @@ public class Category
     [Column(name: "is_current")]
     public bool IsCurrent { get; set; }
 }
+
+public record CategoryDisplayViewModel(
+string Name,
+long AmountInCents
+);

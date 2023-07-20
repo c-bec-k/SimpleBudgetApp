@@ -30,6 +30,7 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 MicrosoftOAuth.Map(app);
+CategoryController.Map(app);
 
 app.Run();
 
