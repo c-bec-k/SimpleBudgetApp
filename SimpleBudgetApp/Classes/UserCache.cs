@@ -6,9 +6,9 @@ namespace SimpleBudgetApp;
 public class UserCache
 {
   private readonly ConcurrentDictionary<string, (int userId, DateTimeOffset expiry)> _cache;
-  #pragma warning disable IDE0052
+#pragma warning disable IDE0052
   private readonly Timer _timer;
-  #pragma warning restore IDE0052
+#pragma warning restore IDE0052
 
   public UserCache()
   {
@@ -16,7 +16,7 @@ public class UserCache
     _timer = new(CleanCache, null, TimeSpan.FromSeconds(0), TimeSpan.FromDays(1));
   }
 
-    public void Add(string hashVal, int userId)
+  public void Add(string hashVal, int userId)
   {
     DateTimeOffset exp = DateTimeOffset.Now.AddDays(7);
     _cache.TryAdd(hashVal, (userId, exp));
@@ -30,9 +30,14 @@ public class UserCache
 
   private void CleanCache(object _)
   {
+    List<KeyValuePair<string, (int userId, DateTimeOffset expiry)>> Items = new();
     foreach (var item in _cache)
     {
-      if (item.Value.expiry < DateTimeOffset.Now) _cache.TryRemove(item);
+      if (item.Value.expiry < DateTimeOffset.Now) Items.Add(item);
+    }
+    foreach (var item in Items)
+    {
+      _cache.TryRemove(item);
     }
   }
 }
