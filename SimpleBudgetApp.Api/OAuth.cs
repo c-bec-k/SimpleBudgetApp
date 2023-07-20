@@ -71,7 +71,7 @@ public static class MicrosoftOAuth
         SameSite = SameSiteMode.Strict
       };
       res.Cookies.Append("Auth", userCode, cookieOptions);
-      res.StatusCode = 200;
+      res.StatusCode = StatusCodes.Status200OK;
       res.Redirect("/");
     });
   }
