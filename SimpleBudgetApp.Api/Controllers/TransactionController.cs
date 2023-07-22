@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using SimpleBudgetApp.SqlDbServices;
+using SimpleBudgetApp;
 
 namespace SimpleBudgetApp.Api;
 
@@ -43,12 +44,10 @@ public static class TransactionController
       if (userId < 1) return Results.Unauthorized();
 
       List<Transaction> txns = Db.Transactions.Where(x => x.UserId == userId && x.CategoryId == categoryId).ToList();
-      List<TransactionDisplayViewModel> txnsToSend = new();
-
-      foreach (var txn in txns)
+      List<TransactionDisplayViewModel> txnsToSend = txns.Select(txn =>
       {
-        txnsToSend.Add(new TransactionDisplayViewModel(Id: txn.Id, AmountInCents: txn.AmountInCents, Category: txn.CategoryId, Vendor: txn.Vendor, Note: txn.Note));
-      }
+        return new TransactionDisplayViewModel(Id: txn.Id, AmountInCents: txn.AmountInCents, Category: txn.CategoryId, Vendor: txn.Vendor, Note: txn.Note);
+      }).ToList();
 
       return Results.Ok(txnsToSend);
     });

@@ -17,7 +17,6 @@ public static class CategoryController
       using JsonDocument data = await JsonDocument.ParseAsync(ctx.Request.Body);
       JsonElement payload = data.RootElement;
 
-
       DateTime rightNow = new(DateTime.Now.Year, DateTime.Now.Month, 1);
       long offsetNow = new DateTimeOffset(rightNow).ToUnixTimeSeconds();
 
@@ -57,12 +56,7 @@ public static class CategoryController
       if (userId < 1) return Results.Unauthorized();
 
       List<Category> categories = Db.Categories.Where(x => x.UserId == userId && x.IsCurrent).ToList();
-      List<CategoryDisplayViewModel> catsToSend = new();
-
-      foreach (var cat in categories)
-      {
-        catsToSend.Add(new CategoryDisplayViewModel(Id: cat.Id, Name: cat.Name, AmountInCents: cat.AmountInCents));
-      }
+      List<CategoryDisplayViewModel> catsToSend = categories.Select(cat => new CategoryDisplayViewModel(Id: cat.Id, Name: cat.Name, AmountInCents: cat.AmountInCents)).ToList();
 
       return Results.Ok(catsToSend);
     });
