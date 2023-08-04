@@ -41,7 +41,7 @@ public static class MicrosoftOAuth
       GraphReply graphReply = await graphRes.Content.ReadFromJsonAsync<GraphReply>();
 
       User user;
-      User checkUser = Db.Users.First(x => x.OAuth_Id == graphReply.MsId);
+      User checkUser = Db.Users.FirstOrDefault(x => x.OAuth_Id == graphReply.MsId);
       if (checkUser != null)
       {
         user = checkUser;
@@ -65,7 +65,7 @@ public static class MicrosoftOAuth
       CookieOptions cookieOptions = new()
       {
         HttpOnly = true,
-        Secure = true,
+        // Secure = true,
         Expires = DateTimeOffset.Now.AddDays(7),
         Path = "/",
         SameSite = SameSiteMode.Strict
